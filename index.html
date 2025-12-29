@@ -154,8 +154,9 @@
       document.querySelectorAll('.map-tile').forEach(tile => tile.classList.toggle('is-active', tile === activeTile));
     }
 
-    function setSource(text) {
+    function setSource(text, isFallback = false) {
       infoSource.textContent = text;
+      infoSource.classList.toggle('is-fallback', isFallback);
     }
 
     async function fetchText(url) {
@@ -207,7 +208,7 @@
         await loadCsv();
       } catch (error) {
         console.error('載入 CSV 失敗', error);
-        setSource('讀取失敗：使用內建預設資料');
+        setSource('讀取失敗：使用內建預設資料（請解決 taiwan-data.csv 衝突後重試）', true);
         renderGrid(fallbackData);
         infoName.textContent = '已套用預設數據';
         infoValue.textContent = '檔案遺失或衝突時仍可瀏覽';

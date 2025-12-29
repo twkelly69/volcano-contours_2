@@ -4,6 +4,7 @@
   --panel-strong: #0f141c;
   --text: #e6edf3;
   --muted: #9ea6b4;
+  --warning: #ffb86c;
   --accent: #ff7b72;
   --accent-2: #7df0ff;
   --border: #2b313b;
@@ -196,6 +197,7 @@ a { color: var(--accent-2); text-decoration: none; }
 .info__name { font-size: 28px; color: var(--text); margin-bottom: 6px; }
 .info__value { font-size: 36px; color: var(--accent); margin-bottom: 10px; }
 .info__source { color: var(--muted); font-size: 14px; }
+.info__source.is-fallback { color: var(--warning); }
 
 .cards {
   display: grid;
