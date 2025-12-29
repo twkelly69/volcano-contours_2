@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Volcano Contours</title>
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <header class="hero">
+    <div class="hero__content">
+      <p class="hero__eyebrow">Project overview</p>
+      <h1>Volcano Contours</h1>
+      <p class="hero__lede">
+        A lightweight static site ready to host contour maps, data visualizations, or project documentation on GitHub Pages.
+      </p>
+      <div class="hero__actions">
+        <a class="button" href="#quickstart">View deployment steps</a>
+        <a class="button button--ghost" href="#about">Learn more</a>
+      </div>
+    </div>
+    <div class="hero__art" aria-hidden="true">
+      <div class="ring"></div>
+      <div class="ring ring--accent"></div>
+      <div class="ring ring--glow"></div>
+    </div>
+  </header>
+
+  <main>
+    <section id="about" class="section">
+      <div class="section__header">
+        <h2>About this site</h2>
+        <p>
+          Use this template to publish maps, charts, notebooks, or documentation. Everything is static,
+          so GitHub Pages can serve it directly—no build step required.
+        </p>
+      </div>
+      <div class="cards">
+        <article class="card">
+          <h3>Static-first</h3>
+          <p>
+            All assets live in the repository, making previewing locally as simple as opening <code>index.html</code> in a browser.
+          </p>
+        </article>
+        <article class="card">
+          <h3>GitHub Actions included</h3>
+          <p>
+            A Pages workflow is ready to deploy on every push to the <code>work</code> branch.
+            Adjust the branch name in <code>.github/workflows/pages.yml</code> if needed.
+          </p>
+        </article>
+        <article class="card">
+          <h3>Customizable</h3>
+          <p>
+            Replace this text with project details, embed images, or add scripts to load interactive maps.
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <section id="quickstart" class="section section--alt">
+      <div class="section__header">
+        <h2>Deployment quickstart</h2>
+        <p>Follow these steps to publish automatically to GitHub Pages.</p>
+      </div>
+      <ol class="steps">
+        <li>
+          <strong>Enable GitHub Pages.</strong> In repository settings, set Source to <em>GitHub Actions</em>.
+        </li>
+        <li>
+          <strong>Push your changes.</strong> Commits to the <code>work</code> branch will trigger the workflow.
+        </li>
+        <li>
+          <strong>Wait for deployment.</strong> GitHub will build and publish the site. The URL appears in the
+          Actions log and the Pages settings page.
+        </li>
+      </ol>
+      <p class="note">
+        Want to host from another branch or folder? Update the <code>on.push.branches</code> and
+        <code>upload-pages-artifact</code> <code>path</code> values in the workflow.
+      </p>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>
+      Ready to customize? Edit <code>index.html</code> and commit to deploy via GitHub Pages.
+    </p>
+  </footer>
+</body>
+</html>
