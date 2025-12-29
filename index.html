@@ -1,22 +1,23 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-Hant">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Volcano Contours</title>
+  <title>台灣各縣市每月平均用電量</title>
   <link rel="stylesheet" href="assets/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
   <header class="hero">
     <div class="hero__content">
-      <p class="hero__eyebrow">Project overview</p>
-      <h1>Volcano Contours</h1>
+      <p class="hero__eyebrow">2023 年示範資料</p>
+      <h1>台灣各縣市每月平均用電量</h1>
       <p class="hero__lede">
-        A lightweight static site ready to host contour maps, data visualizations, or project documentation on GitHub Pages.
+        以每戶用電量 (kWh/戶) 為基準，整理 22 個縣市、12 個月份的平均用電曲線，方便快速比較全國趨勢與地方差異。
       </p>
       <div class="hero__actions">
-        <a class="button" href="#quickstart">View deployment steps</a>
-        <a class="button button--ghost" href="#about">Learn more</a>
+        <a class="button" href="#visual">查看互動圖表</a>
+        <a class="button button--ghost" href="assets/electricity-data.json">下載資料</a>
       </div>
     </div>
     <div class="hero__art" aria-hidden="true">
@@ -29,63 +30,204 @@
   <main>
     <section id="about" class="section">
       <div class="section__header">
-        <h2>About this site</h2>
+        <h2>如何閱讀這份資料</h2>
         <p>
-          Use this template to publish maps, charts, notebooks, or documentation. Everything is static,
-          so GitHub Pages can serve it directly—no build step required.
+          數據以 kWh/戶呈現，代表「每戶每月平均用電量」。下方圖表可切換縣市查看曲線；表格則依全年平均排序，讓你迅速定位用電強度較高或較低的地區。
         </p>
       </div>
-      <div class="cards">
+      <div class="section__grid">
         <article class="card">
-          <h3>Static-first</h3>
-          <p>
-            All assets live in the repository, making previewing locally as simple as opening <code>index.html</code> in a browser.
-          </p>
+          <h3>完整月份</h3>
+          <p>涵蓋 1 月到 12 月，觀察四季氣候與用電需求的連動。</p>
         </article>
         <article class="card">
-          <h3>GitHub Actions included</h3>
-          <p>
-            A Pages workflow is ready to deploy on every push to the <code>work</code> branch.
-            Adjust the branch name in <code>.github/workflows/pages.yml</code> if needed.
-          </p>
+          <h3>全國對比</h3>
+          <p>所有縣市統一以 kWh/戶比較，避免因人口規模造成的誤差。</p>
         </article>
         <article class="card">
-          <h3>Customizable</h3>
-          <p>
-            Replace this text with project details, embed images, or add scripts to load interactive maps.
-          </p>
+          <h3>可再利用</h3>
+          <p>原始資料以 JSON 提供，便於匯入筆記本或轉成 CSV 繪圖。</p>
         </article>
       </div>
     </section>
 
-    <section id="quickstart" class="section section--alt">
+    <section id="visual" class="section section--alt">
       <div class="section__header">
-        <h2>Deployment quickstart</h2>
-        <p>Follow these steps to publish automatically to GitHub Pages.</p>
+        <div class="section__header-top">
+          <h2>每月平均用電走勢</h2>
+          <span class="pill" id="yearLabel">2023</span>
+        </div>
+        <p>選擇縣市即可切換曲線，預設為全國平均。</p>
       </div>
-      <ol class="steps">
-        <li>
-          <strong>Enable GitHub Pages.</strong> In repository settings, set Source to <em>GitHub Actions</em>.
-        </li>
-        <li>
-          <strong>Push your changes.</strong> Commits to the <code>work</code> branch will trigger the workflow.
-        </li>
-        <li>
-          <strong>Wait for deployment.</strong> GitHub will build and publish the site. The URL appears in the
-          Actions log and the Pages settings page.
-        </li>
-      </ol>
-      <p class="note">
-        Want to host from another branch or folder? Update the <code>on.push.branches</code> and
-        <code>upload-pages-artifact</code> <code>path</code> values in the workflow.
-      </p>
+      <div class="chart-panel">
+        <div class="chart-panel__controls">
+          <label for="countySelect">選擇縣市</label>
+          <select id="countySelect" class="control"></select>
+          <p class="hint">提示：滑鼠移到折線上的點可查看各月數值。</p>
+        </div>
+        <canvas id="trendChart" height="140" aria-label="每月平均用電量折線圖" role="img"></canvas>
+      </div>
+      <dl class="stat-grid">
+        <div class="stat">
+          <dt>資料筆數</dt>
+          <dd id="statCounties">-</dd>
+        </div>
+        <div class="stat">
+          <dt>最高用電月份</dt>
+          <dd id="statPeak">-</dd>
+        </div>
+        <div class="stat">
+          <dt>最低用電月份</dt>
+          <dd id="statLow">-</dd>
+        </div>
+      </dl>
+    </section>
+
+    <section class="section">
+      <div class="section__header">
+        <h2>縣市全年平均排行榜</h2>
+        <p>依 12 個月份的平均值排序，快速辨識用電較高與較低的區域。</p>
+      </div>
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th scope="col">名次</th>
+              <th scope="col">縣市</th>
+              <th scope="col">全年平均 (kWh/戶)</th>
+              <th scope="col">夏季高峰 (6–8 月平均)</th>
+            </tr>
+          </thead>
+          <tbody id="rankingBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section section--alt">
+      <div class="section__header">
+        <h2>方法與來源</h2>
+        <p>
+          此頁以專案內的 <code>assets/electricity-data.json</code> 為資料來源，格式為每縣市 12 個月份的平均用電量。數值為示範用，以便快速搭建視覺化流程。
+        </p>
+      </div>
+      <ul class="bullet-list">
+        <li>單位為 kWh/戶，方便跨縣市比較。</li>
+        <li>可直接下載 JSON 或改存為 CSV，用於其他圖表或分析。</li>
+        <li>若要換用最新年度，只需更新 JSON 即可沿用同一套視覺與互動。</li>
+      </ul>
     </section>
   </main>
 
   <footer class="footer">
-    <p>
-      Ready to customize? Edit <code>index.html</code> and commit to deploy via GitHub Pages.
-    </p>
+    <p>資料示範：台灣各縣市 2023 年每月平均用電量。歡迎擴充或接入開放資料集。</p>
   </footer>
+
+  <script>
+    const dataUrl = 'assets/electricity-data.json';
+    const countySelect = document.getElementById('countySelect');
+    const rankingBody = document.getElementById('rankingBody');
+    const statCounties = document.getElementById('statCounties');
+    const statPeak = document.getElementById('statPeak');
+    const statLow = document.getElementById('statLow');
+    const yearLabel = document.getElementById('yearLabel');
+    const ctx = document.getElementById('trendChart').getContext('2d');
+
+    let chartInstance;
+
+    const formatNumber = (value) => value.toLocaleString('en-US', { maximumFractionDigits: 1, minimumFractionDigits: 1 });
+
+    const computeAverage = (values) => values.reduce((sum, v) => sum + v, 0) / values.length;
+
+    fetch(dataUrl)
+      .then((response) => response.json())
+      .then((data) => {
+        const months = data.months;
+        const counties = data.counties;
+        const nationalAverage = months.map((_, idx) => computeAverage(counties.map((c) => c.monthly[idx])));
+
+        yearLabel.textContent = data.year;
+        statCounties.textContent = `${counties.length} 個縣市 / ${months.length} 個月份`;
+
+        const findExtreme = (values, comparator) => values.reduce((acc, value, idx) => comparator(value, acc.value) ? { value, idx } : acc, { value: values[0], idx: 0 });
+        const peak = findExtreme(nationalAverage, (a, b) => a > b);
+        const low = findExtreme(nationalAverage, (a, b) => a < b);
+        statPeak.textContent = `${months[peak.idx]}：${formatNumber(peak.value)} kWh/戶`;
+        statLow.textContent = `${months[low.idx]}：${formatNumber(low.value)} kWh/戶`;
+
+        countySelect.innerHTML = '<option value="national">全國平均</option>' +
+          counties.map((c) => `<option value="${c.name}">${c.name}</option>`).join('');
+
+        const renderChart = (target) => {
+          const isNational = target === 'national';
+          const dataset = isNational ? nationalAverage : counties.find((c) => c.name === target)?.monthly || [];
+          const label = isNational ? '全國平均' : `${target} 平均用電量`;
+          const color = isNational ? 'rgba(125, 240, 255, 0.9)' : 'rgba(255, 123, 114, 0.9)';
+          const border = isNational ? '#7df0ff' : '#ff7b72';
+
+          if (chartInstance) chartInstance.destroy();
+          chartInstance = new Chart(ctx, {
+            type: 'line',
+            data: {
+              labels: months,
+              datasets: [{
+                label,
+                data: dataset,
+                borderColor: border,
+                backgroundColor: color,
+                pointRadius: 4,
+                pointHoverRadius: 6,
+                tension: 0.3,
+                fill: false,
+              }],
+            },
+            options: {
+              scales: {
+                y: {
+                  grid: { color: 'rgba(255, 255, 255, 0.08)' },
+                  ticks: { color: '#e6edf3' },
+                  title: { display: true, text: 'kWh/戶', color: '#e6edf3' }
+                },
+                x: { ticks: { color: '#e6edf3' } }
+              },
+              plugins: {
+                legend: { labels: { color: '#e6edf3' } },
+                tooltip: {
+                  callbacks: {
+                    label: (context) => `${context.parsed.y.toFixed(1)} kWh/戶`
+                  }
+                }
+              }
+            }
+          });
+        };
+
+        renderChart('national');
+        countySelect.addEventListener('change', (event) => renderChart(event.target.value));
+
+        const ranking = counties
+          .map((c) => {
+            const annualAvg = computeAverage(c.monthly);
+            const summerAvg = computeAverage(c.monthly.slice(5, 8));
+            return { name: c.name, annualAvg, summerAvg };
+          })
+          .sort((a, b) => b.annualAvg - a.annualAvg);
+
+        rankingBody.innerHTML = ranking
+          .map((row, idx) => `
+            <tr>
+              <td><span class="badge">${idx + 1}</span></td>
+              <td>${row.name}</td>
+              <td>${formatNumber(row.annualAvg)}</td>
+              <td>${formatNumber(row.summerAvg)}</td>
+            </tr>
+          `)
+          .join('');
+      })
+      .catch(() => {
+        statCounties.textContent = '資料載入失敗';
+        statPeak.textContent = '-';
+        statLow.textContent = '-';
+      });
+  </script>
 </body>
 </html>
