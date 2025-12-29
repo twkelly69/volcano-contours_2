@@ -7,6 +7,7 @@ A minimal static site ready for GitHub Pages. Use it to showcase volcano contour
 - 更新 `assets/taiwan-data.csv` 內的縣市名稱與數值，網頁會在載入時解析並顯示於地圖區塊。
 - 將滑鼠或鍵盤焦點移到任何縣市圖磚，該區塊會放大，右側資訊卡同時顯示縣市名稱與對應數值。
 - 圖磚採用六欄網格排列成台灣輪廓，適合展示人口、指標或評分等資料。
+- 若部署時遇到檔案衝突或 CSV 遺失，頁面會退回內建的預設數據，確保互動區塊仍可瀏覽。
 
 ## GitHub Pages deployment
 

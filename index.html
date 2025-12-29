@@ -164,6 +164,31 @@
       return res.text();
     }
 
+    const fallbackData = new Map([
+      ['台北市', '120'],
+      ['新北市', '95'],
+      ['基隆市', '65'],
+      ['桃園市', '110'],
+      ['新竹縣', '80'],
+      ['新竹市', '70'],
+      ['苗栗縣', '60'],
+      ['台中市', '130'],
+      ['彰化縣', '90'],
+      ['南投縣', '75'],
+      ['雲林縣', '85'],
+      ['嘉義縣', '72'],
+      ['嘉義市', '68'],
+      ['台南市', '115'],
+      ['高雄市', '140'],
+      ['屏東縣', '78'],
+      ['台東縣', '50'],
+      ['花蓮縣', '55'],
+      ['宜蘭縣', '58'],
+      ['澎湖縣', '40'],
+      ['金門縣', '35'],
+      ['連江縣', '30'],
+    ]);
+
     async function loadCsv() {
       const csvText = await fetchText('assets/taiwan-data.csv');
       const rows = csvText.trim().split(/\r?\n/).map(line => line.split(','));
@@ -182,9 +207,10 @@
         await loadCsv();
       } catch (error) {
         console.error('載入 CSV 失敗', error);
-        infoName.textContent = '無法載入資料檔';
-        infoValue.textContent = '請確認檔案路徑或瀏覽器版本';
-        setSource('讀取失敗：請確認檔案存在或檢查伺服器路徑');
+        setSource('讀取失敗：使用內建預設資料');
+        renderGrid(fallbackData);
+        infoName.textContent = '已套用預設數據';
+        infoValue.textContent = '檔案遺失或衝突時仍可瀏覽';
       }
     }
 
