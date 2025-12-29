@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Volcano Contours - Taiwan Data</title>
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <header class="hero">
+    <div class="hero__content">
+      <p class="hero__eyebrow">資料互動展示</p>
+      <h1>Volcano Contours</h1>
+      <p class="hero__lede">
+        輕量化的 GitHub Pages 網站，現在載入台灣地圖並即時呈現試算表中的數據。將滑鼠移到縣市區塊即可放大查看名稱與數值。
+      </p>
+      <div class="hero__actions">
+        <a class="button" href="#map">查看台灣地圖</a>
+        <a class="button button--ghost" href="#quickstart">部署說明</a>
+      </div>
+    </div>
+    <div class="hero__art" aria-hidden="true">
+      <div class="ring"></div>
+      <div class="ring ring--accent"></div>
+      <div class="ring ring--glow"></div>
+    </div>
+  </header>
+
+  <main>
+    <section id="map" class="section section--highlight">
+        <div class="section__header">
+          <h2>台灣地圖互動圖磚</h2>
+          <p>數據來源：<code>assets/taiwan-data.csv</code>。游標移動到縣市區塊時，名稱與數值會加大顯示。</p>
+        </div>
+      <div class="map-panel">
+        <div class="map-grid" aria-live="polite"></div>
+        <aside class="map-info" aria-live="polite">
+          <p class="label">目前選擇</p>
+          <p class="info__name">移到縣市以查看</p>
+          <p class="info__value">--</p>
+          <p class="info__source">資料來源載入中…</p>
+        </aside>
+      </div>
+        <p class="note">如果尚未部署，直接開啟 <code>index.html</code> 也能在本機預覽互動效果。資料以 CSV 存放於版本庫中。</p>
+    </section>
+
+    <section id="about" class="section">
+      <div class="section__header">
+        <h2>關於這個頁面</h2>
+        <p>
+          使用這個範本來發布地圖、圖表或專案說明。所有資源都放在版本庫中，適合直接部署到 GitHub Pages。
+        </p>
+      </div>
+      <div class="cards">
+        <article class="card">
+          <h3>CSV 數據即時載入</h3>
+          <p>
+            透過 <code>assets/taiwan-data.csv</code> 取得每個縣市的數值，更新檔案即可反映最新資料。
+          </p>
+        </article>
+        <article class="card">
+          <h3>互動強調</h3>
+          <p>
+            指向縣市時，區塊會放大並同步更新右側資訊卡，便於投影片或展示使用。
+          </p>
+        </article>
+        <article class="card">
+          <h3>GitHub Actions 部署</h3>
+          <p>
+            Pages workflow 會在推送 <code>work</code> 分支後自動發布。可於 <code>.github/workflows/pages.yml</code> 調整來源分支。
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <section id="quickstart" class="section section--alt">
+      <div class="section__header">
+        <h2>部署步驟</h2>
+        <p>按照以下說明即可在 GitHub Pages 上展示互動地圖。</p>
+      </div>
+      <ol class="steps">
+        <li>
+          <strong>啟用 GitHub Pages。</strong> 在 repository 設定將 Source 設為 <em>GitHub Actions</em>。
+        </li>
+        <li>
+          <strong>推送更新。</strong> 將修改提交並推送到 <code>work</code> 分支，workflow 即會觸發。
+        </li>
+        <li>
+          <strong>等待發布。</strong> GitHub 會建置並發布網站，網址可在 Actions log 與 Pages 設定頁找到。
+        </li>
+      </ol>
+      <p class="note">
+        若需從其他分支或資料夾發布，請更新 workflow 中的 <code>on.push.branches</code> 與 <code>upload-pages-artifact</code> 的 <code>path</code>。
+      </p>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>
+      準備好自訂內容了嗎？編輯 <code>index.html</code> 並提交到 GitHub Pages，互動地圖就能隨資料更新。
+    </p>
+  </footer>
+
+  <script>
+    const layout = [
+      { id: 'keelung', name: '基隆市', row: 1, col: 4 },
+      { id: 'taipei', name: '台北市', row: 2, col: 4 },
+      { id: 'new-taipei', name: '新北市', row: 2, col: 3 },
+      { id: 'yilan', name: '宜蘭縣', row: 2, col: 5 },
+      { id: 'taoyuan', name: '桃園市', row: 3, col: 3 },
+      { id: 'hsinchu-city', name: '新竹市', row: 3, col: 2 },
+      { id: 'hsinchu', name: '新竹縣', row: 3, col: 4 },
+      { id: 'miaoli', name: '苗栗縣', row: 4, col: 3 },
+      { id: 'taichung', name: '台中市', row: 4, col: 4 },
+      { id: 'nantou', name: '南投縣', row: 5, col: 4 },
+      { id: 'changhua', name: '彰化縣', row: 5, col: 3 },
+      { id: 'yunlin', name: '雲林縣', row: 6, col: 3 },
+      { id: 'chiayi-city', name: '嘉義市', row: 6, col: 2 },
+      { id: 'chiayi', name: '嘉義縣', row: 6, col: 4 },
+      { id: 'tainan', name: '台南市', row: 7, col: 4 },
+      { id: 'kaohsiung', name: '高雄市', row: 8, col: 4 },
+      { id: 'pingtung', name: '屏東縣', row: 9, col: 4 },
+      { id: 'taitung', name: '台東縣', row: 9, col: 5 },
+      { id: 'hualien', name: '花蓮縣', row: 8, col: 5 },
+      { id: 'penghu', name: '澎湖縣', row: 7, col: 2 },
+      { id: 'kinmen', name: '金門縣', row: 3, col: 1 },
+      { id: 'lienchiang', name: '連江縣', row: 1, col: 2 },
+    ];
+
+    const infoName = document.querySelector('.info__name');
+    const infoValue = document.querySelector('.info__value');
+    const infoSource = document.querySelector('.info__source');
+    const grid = document.querySelector('.map-grid');
+
+    const fallbackData = [
+      ['基隆市', '12'], ['台北市', '38'], ['新北市', '41'], ['宜蘭縣', '9'],
+      ['桃園市', '27'], ['新竹市', '6'], ['新竹縣', '11'], ['苗栗縣', '10'],
+      ['台中市', '35'], ['南投縣', '8'], ['彰化縣', '20'], ['雲林縣', '13'],
+      ['嘉義市', '5'], ['嘉義縣', '9'], ['台南市', '30'], ['高雄市', '32'],
+      ['屏東縣', '15'], ['台東縣', '4'], ['花蓮縣', '7'], ['澎湖縣', '3'],
+      ['金門縣', '2'], ['連江縣', '1'],
+    ];
+
+    function renderGrid(dataMap) {
+      grid.innerHTML = '';
+      layout.forEach(block => {
+        const tile = document.createElement('button');
+        tile.className = 'map-tile';
+        tile.style.setProperty('--row', block.row);
+        tile.style.setProperty('--col', block.col);
+        tile.dataset.name = block.name;
+        tile.dataset.value = dataMap.get(block.name) ?? '—';
+        tile.textContent = block.name;
+        tile.addEventListener('mouseenter', () => updateInfo(tile.dataset.name, tile.dataset.value, tile));
+        tile.addEventListener('focus', () => updateInfo(tile.dataset.name, tile.dataset.value, tile));
+        grid.appendChild(tile);
+      });
+    }
+
+    function updateInfo(name, value, activeTile) {
+      infoName.textContent = name;
+      infoValue.textContent = value === '—' ? '未提供數值' : value;
+      document.querySelectorAll('.map-tile').forEach(tile => tile.classList.toggle('is-active', tile === activeTile));
+    }
+
+    function setSource(text) {
+      infoSource.textContent = text;
+    }
+
+    async function fetchText(url) {
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(`${url} 回應 ${res.status}`);
+      return res.text();
+    }
+
+    function parseCsv(csvText) {
+      const rows = csvText.trim().split(/\r?\n/).map(line => line.split(','));
+      const dataMap = new Map();
+      rows.slice(1).forEach(([county, value]) => {
+        if (county) {
+          dataMap.set(county.trim(), value?.trim() || '—');
+        }
+      });
+      return dataMap;
+    }
+
+    async function loadDataset() {
+      try {
+        const csvText = await fetchText('assets/taiwan-data.csv');
+        const dataMap = parseCsv(csvText);
+        setSource('資料來自 taiwan-data.csv');
+        renderGrid(dataMap);
+      } catch (error) {
+        console.error('載入 CSV 失敗，改用預設資料', error);
+        const dataMap = new Map(fallbackData);
+        setSource('讀取 CSV 失敗，顯示預設資料');
+        renderGrid(dataMap);
+        infoValue.textContent = '以預設資料顯示';
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', loadDataset);
+  </script>
+</body>
+</html>
